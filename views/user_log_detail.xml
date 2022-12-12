@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+
+    <record id="log_detail_wizard_tree" model="ir.ui.view">
+        <field name="name">log.detail.tree</field>
+        <field name="model">log.detail</field>
+        <field name="arch" type="xml">
+            <tree string="Details" create="false">
+                <field name="name"/>
+                <field name="punching_day"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="log_detail_wizard_action" model="ir.actions.act_window">
+        <field name="name">Détails des employés</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">log.detail</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="log_detail_wizard_tree"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

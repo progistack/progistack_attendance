@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<odoo noupdate="1">
+	<record forcecreate="True" id="cron_sequence_log" model="ir.cron">
+		<field name="name">Sequence Log</field>
+		<field eval="True" name="active"/>
+		<field name="user_id" ref="base.user_admin"/>
+		<field name="interval_number">1</field>
+		<field name="interval_type">days</field>
+		<field name="numbercall">-1</field>
+		<field name="model_id" ref="progistack_attendance.model_sequence_log"/>
+		<field name="state">code</field>
+		<field name="code">model.generate_day_value()</field>
+	</record>
+</odoo>

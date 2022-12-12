@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="inherit_hr_employee_form1" model="ir.ui.view">
+        <field name="name">inherit.hr.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <header>
+                <field name="est_genere" invisible="1"/>
+                <button
+                        name="generer_jours_travailles"
+                        attrs="{'invisible': [('est_genere', '=', True)]}"
+                        type="object" class="btn-primary" string="Génerer jours travaillés"/>
+            </header>
+            <notebook position="inside">
+                <page string="Planing Employé" name="employee">
+                    <group>
+                        <group>
+                            <field name="heur_arrive" widget="timepicker" /> <!-- style="width:50%; -->
+                            <field name="heur_depart" widget="timepicker"/>
+                            <field name="heur_debut_pause" widget="timepicker" />
+                            <field name="heur_fin_pause" widget="timepicker" />
+                            <!--field name="heur_de_travail" widget="float_time"/-->
+                        </group>
+                        <group>
+                            <!--<field name="weekend_day" widget="many2many_checkboxes" string="Jours de travail"/>-->
+                            <field name="tolerance" string="Tolérance retard maximale" widget="timepicker"/>
+                            <field name="tolerance_pause" />
+                            <field name="jours_travailles_id" widget="many2many_checkboxes"/>
+                        </group>
+                    </group>
+                </page>
+                <!--
+                <page string="Planification d'absence et vacances">
+                    <field name="employee_absence_id" string="Planification d'absence"/>
+                </page>
+                -->
+            </notebook>
+        </field>
+    </record>
+
+    <record id="view_employee_absence_tree" model="ir.ui.view">
+        <field name="name">employe.absence.tree</field>
+        <field name="model">employee.absence</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="motif_absence"/>
+                    <field name="date_debut_absence" string="Date de début"/>
+                    <field name="date_fin_absence" string="Date de fin"/>
+                    <field name="employee_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_employee_absence_tree" model="ir.ui.view">
+        <field name="name">employe.absence.tree</field>
+        <field name="model">employee.absence</field>
+        <field name="arch" type="xml">
+            <tree string="Liste d'absence" editable="bottom">
+                <field name="motif_absence" width="1.6"/>
+                <field name="date_debut_absence" string="Date de début" width="1.6"/>
+                <field name="date_fin_absence" string="Date de fin" width="1.6"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="week_day_form">
+        <field name="name">week day form</field>
+        <field name="model">week.day</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="days"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="week_day_list">
+        <field name="name">week day list</field>
+        <field name="model">week.day</field>
+        <field name="arch" type="xml">
+            <tree default_order="id desc, name">
+                <field name="id"/>
+                <field name="days"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="inherit_attendance_search" model="ir.ui.view">
+        <field name="name">inherited_hr.attendance.tree</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter
+                        string="Date : 2 semaines"
+                        name="date_two_week"
+                        domain="[('date_pointage', '&gt;=',datetime.datetime.combine(context_today() + relativedelta(days=-15), datetime.time(0,0,0)).strftime('%Y-%m-%d %H:%M:%S'))
+                ]"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="hr_attendance.hr_attendance_action" model="ir.actions.act_window">
+        <field name="context">{'search_default_date_two_week': 1, 'search_default_date':1, 'search_default_today': 1}</field>
+    </record>
+
+    <record id="view_hr_absence_tree1" model="ir.ui.view">
+        <field name="name">hr.absence.tree</field>
+        <field name="model">hr.absence</field>
+        <field name="arch" type="xml">
+            <tree string="Liste d'absence" create="1" editable="bottom" decoration-danger="employee_id == employee_id">
+                <field name="employee_id" width="1.6"/>
+                <field name="date_absence" width="1.8"/>
+                <field name="heur_perdu" width="1.6"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_hr_absence_form1" model="ir.ui.view">
+        <field name="name">hr.absence.tree</field>
+        <field name="model">hr.absence</field>
+        <field name="arch" type="xml">
+            <form string="Liste d'absence">
+                <field name="employee_id" width="1.6"/>
+                <field name="date_absence" width="1.6"/>
+                <field name="heur_perdu" width="1.6"/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_employee_absence_tree1" model="ir.ui.view">
+        <field name="name">employe.absence.tree</field>
+        <field name="model">employee.absence</field>
+        <field name="arch" type="xml">
+            <tree string="liste d'absence" editable="bottom">
+                <field name="motif_absence" width="1.6"/>
+                <field name="date_debut_absence" string="Date de début" width="1.6"/>
+                <field name="date_fin_absence" string="Date de fin" width="1.6"/>
+                <field name="employee_id" width="1.6"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="hr_attendance_employee_graph">
+        <field name="name">hr.attendance.employee.graph</field>
+        <field name="model">hr.attendance</field>
+        <field name="arch" type="xml">
+            <graph string="Analyse des presences" sample="1">
+                <field name="employee_id"/>
+                <field name="worked_hour" type="measure" invisible="1"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="hr_analyse_graph_employee_action" model="ir.actions.act_window">
+        <field name="name">Analyse des activités</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="hr_attendance_employee_graph"/>
+    </record>
+
+
+    <record id="hr_absence_action1" model="ir.actions.act_window">
+        <field name="name">Liste des absents</field>
+        <field name="res_model">hr.absence</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_hr_absence_tree1"/>
+    </record>
+
+    <record id="hr_absence_autor_action" model="ir.actions.act_window">
+        <field name="name">Liste d'absence autorisé</field>
+        <field name="res_model">employee.absence</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_employee_absence_tree1"/>
+    </record>
+    <record id="action_zk_report_daily_attendance" model="ir.actions.act_window">
+        <field name="name">Analyse de présence</field>
+        <field name="res_model">zk.report.daily.attendance</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_today':1}</field>
+        <field name="search_view_id" ref="view_zk_report_daily_attendance_search"/>
+    </record>
+
+    <menuitem id="hr_hr_attendance_graph_menu1" sequence="60" name="Analyse"
+              parent="hr_attendance.menu_hr_attendance_root" action="hr_analyse_graph_employee_action"/>
+    <menuitem id="menu_zk_attendance_view" name="Présence log" action="action_zk_report_daily_attendance"
+              parent="hr_hr_attendance_graph_menu1"
+              sequence="2" groups="hr_attendance.group_hr_attendance_user"/>
+    <!--menuitem id="hr_absence_menu1" sequence="20" name="Absences" parent="hr_attendance.menu_hr_attendance_root"/-->
+    <menuitem id="hr_absence_autoris_menu" sequence="1" name="Absences non autorisé"
+              parent="hr_hr_attendance_graph_menu1" action="hr_absence_action1"/>
+
+
+</odoo>

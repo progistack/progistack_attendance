@@ -1,0 +1,38 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="report_presence_form_views_wiz">
+            <field name="name">report presence</field>
+            <field name="model">report.presence</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                             <field name="with_present"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                             <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="confirmer" type="object" string="Confirmer"/>
+<!--                        <button name="confirmer" type="object" string="Telecharger avec les detailles"/>-->
+                        <button name="cancel" type="object" string="Annuler"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="report_presence_update_action" model="ir.actions.act_window">
+            <field name="name">Rapport de présence</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.presence</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="report_presence_form_views_wiz" />
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

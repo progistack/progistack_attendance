@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_zk_machine_form" model="ir.ui.view">
+        <field name="name">zk.machine.form</field>
+        <field name="model">zk.machine</field>
+        <field name="arch" type="xml">
+            <form string="Biometric Device">
+                <header>
+                    <button name="clear_attendance" type="object" string="Effacer les données" class="oe_highlight"
+                                icon="fa-remove " confirm="Es-tu sûr de vouloir faire ça?"/>
+                    <button
+                            name="%(progistack_attendance.action_download_lack_attendance)d"
+                            string="Telecharger presences manquante"
+                            type="action"
+                    />
+                    <button
+                            name="%(progistack_attendance.action_download_machine_attendance)d"
+                            string="Telecharger les presences de la machine"
+                            type="action"
+                    />
+
+                    <button name="download_attendance" type="object" string="Synchroniser" class="oe_highlight"
+                            icon="fa-download " confirm="Es-tu sûr de vouloir faire ça?" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" placeholder="Machine IP"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="port_no"/>
+<!--                            <field name="address_id"/>-->
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="device_type"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_zk_machine_tree" model="ir.ui.view">
+        <field name="name">zk.machine.tree</field>
+        <field name="model">zk.machine</field>
+        <field name="arch" type="xml">
+            <tree string="Biometric Machine">
+                <field name="name"/>
+                <field name="port_no"/>
+<!--                <field name="address_id"/>-->
+                <field name="device_type"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="zk_machine_action" model="ir.actions.act_window">
+        <field name="name">Attendances</field>
+        <field name="res_model">zk.machine</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="hr_employee_inherit_form_view" model="ir.ui.view">
+        <field name="name">hr.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="device_id"/>
+
+            </field>
+            <xpath expr="//field[@name='parent_id']" position="replace">
+                <field name="parent_id" string="Responsable"/>
+            </xpath>
+
+            <xpath expr="//field[@name='resource_calendar_id']" position="attributes">
+                <attribute name="require">False</attribute>
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='pin']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tz']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='coach_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_ids']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+
+             <xpath expr="//group[@name='departure']" position="attributes">
+                <attribute name="string">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+
+            <xpath expr="//page[@name='hr_settings']" position="attributes">
+                <attribute name="string">Configuration</attribute>
+            </xpath>
+
+
+
+
+        </field>
+    </record>
+
+
+    <menuitem id="zk_machine_menu" parent="hr_attendance.menu_hr_attendance_root" sequence="50" name="Gestionnaire biométrique" />
+    <menuitem id="zk_machine_sub_menu" parent="zk_machine_menu"  name="Configuration de l'appareil" action="zk_machine_action" sequence="1"/>
+
+
+</odoo>
+

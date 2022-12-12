@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+
+{
+    'name': 'Biometric Integration',
+    'version': '1.0',
+    'summary': """Integrating Biometric Device  With HR Attendance (Face + Thumb)""",
+    'description': """This module integrates Odoo with the biometric device,odoo15,odoo,hr,attendance""",
+    'category': 'Generic Modules/Human Resources',
+    'author': 'progistack, emmanuelprogistack, Hydra16',
+    'company': 'progistack',
+    'website': "https://www.progistack.com",
+    'depends': ['base_setup', 'hr_attendance', 'hr_holidays'],
+    '_post_init_hook': '_post_init_hook',
+    'data': [
+        'security/ir.model.access.csv',
+        'wizard/download_lack_attendance.xml',
+        'wizard/download_machine.xml',
+        'views/date_modification_wizard.xml',
+        'views/user_log_detail.xml',
+        'views/zk_machine_view.xml',
+        'views/zk_machine_attendance_view.xml',
+        'views/parametrage_view.xml',
+        'data/download_data.xml',
+        'data/sequence_log.xml',
+
+        'data/auto_download_lack_attendance.xml',
+        'report/progistack_footer.xml',
+        'report/report.xml',
+        'wizard/presence_report.xml',
+    ],
+    'images': ['static/description/banner.jpg'],
+    'license': 'AGPL-3',
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+}

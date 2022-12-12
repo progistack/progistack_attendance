@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+    <record id="date_modification_wizard_form" model="ir.ui.view">
+        <field name="name">modification.date.form</field>
+        <field name="model">date.modification</field>
+        <field name="arch" type="xml">
+            <form string="Heure de sortie">
+
+                <!--                <xpath expr="//button[@name='add_date_sortie']"-->
+                <!--                       position="replace">-->
+                <!--                    <button string="Confirmer" name="add_date_sortie" type="object" class="btn-primary"/>-->
+                <!--                </xpath>-->
+                <group>
+                    <field name="choice"/>
+                    <field name="date_change_in" widget="float_time" attrs="{'invisible':[('choice','=','2')]}"/>
+                    <field name="date_change_out" widget="float_time" attrs="{'invisible':[('choice','=','1')]}"/>
+                    <field name="hour_change" widget="float_time" attrs="{'invisible':['|', ('choice','=','1'), ('choice','=','2')]}"/>
+                    <field name="absence" invisible="1" />
+                    <field name="est_present" attrs="{'invisible': [('absence', '!=', True)]}"/>
+                </group>
+                <footer>
+                    <!-- changer le nom du button add_date_sortie par add_date_entre -->
+                    <xpath expr="//button[@name='add_date_sortie']"
+                           position="replace" attrs="{'invisible':[('choice','=','2')]}">
+                        <button string="Confirmer" name="add_date_entre" type="object" class="btn-primary"/>
+                    </xpath>
+                    <!-- changer le nom du button add_date_sortie par add_heure_travailler -->
+                    <xpath expr="//button[@name='add_date_sortie']"
+                           position="replace" attrs="{'invisible':['|', ('choice','=','1'), ('choice','=','2')]}">
+                        <button string="Confirmer" name="add_heure_travailler" type="object" class="btn-primary"/>
+                    </xpath>
+
+                    <button string="Confirmer" name="add_date_sortie" type="object" class="btn-primary"
+                            attrs="{'invisible':[('choice','=','1')]}"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="date_modification_wizard_action" model="ir.actions.act_window">
+        <field name="name">Modification de l'Heure d'entrée ou de sortie</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">date.modification</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="date_modification_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

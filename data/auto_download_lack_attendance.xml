@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="auto_download_lack_attendance" model="ir.cron">
+            <field name="name">Auto download lack attendance</field>
+            <field name="numbercall">-1</field>
+            <field name="priority">5</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d 18:00:00')" />
+            <field name="model_id" ref="progistack_attendance.model_zk_machine"/>
+            <field name="state">code</field>
+            <field name="code">model.auto_download_lack_attendance()</field>
+        </record>
+    </data>
+</odoo>

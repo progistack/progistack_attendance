@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="download_machine_attendance_form" model="ir.ui.view">
+        <field name="name">download.machine.attendance.form</field>
+        <field name="model">download.machine.attendance</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from" />
+                        </group>
+                        <group>
+                            <field name="date_to" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="download_machine_attendance" type="object" string="Envoyer" />
+                    <button name="to_update_check_in" type="object" string="update" />
+<!--                    <button name="download_lack_attendance" type="object" string="Envoyer" class="btn-primary" special="save" data-hotkey="v"/>-->
+<!--                    <button string="Annuler" class="btn-secondary" special="cancel" data-hotkey="z"/>-->
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_download_machine_attendance" model="ir.actions.act_window">
+        <field name="name">Télecharger les données de présence de la machine</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">download.machine.attendance</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

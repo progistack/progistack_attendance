@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Customize Attendance Report -->
+    <record id="inherited_view_attendance_tree" model="ir.ui.view">
+        <field name="name">inherited_hr.attendance.tree</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="arch" type="xml">
+<!--            <xpath expr="//tree" position="attributes">-->
+<!--                <attribute name="default_order">date_pointage</attribute>-->
+<!--            </xpath>-->
+<!--            <xpath expr="//tree" position="inside">-->
+<!--                <header>-->
+<!--                    <button name="print_wizard" string="Imprimer" type="object" class="btn-primary"/>-->
+<!--                </header>-->
+<!--            </xpath>-->
+<!--            <xpath expr="/tree/field[@name='worked_hours']" position="replace">-->
+
+<!--                <field name="worked_hour" type="measure" string="heures travaillées" width="1" widget="float_time"-->
+<!--                       readonly="1" decoration-success="worked_hour >= 8.00" decoration-danger="worked_hour &lt; 8.00" attrs="{'invisible': [('pointge_oublie')]}"/>-->
+<!--                <field name="order_number" invisible="1"/>-->
+<!--            </xpath>-->
+            <xpath expr="/tree/field[@name='worked_hours']" position="replace">
+                <field name="_is_work_hour_use" invisible="1" />
+                <field name="worked_hour" type="measure" string="heures travaillées" width="1" widget="float_time"
+                       readonly="1" decoration-success="worked_hour >= 8.00" decoration-danger="worked_hour &lt; 8.00" attrs="{'column_invisible': 1}" />
+                <field name="order_number" invisible="1"/>
+                <field name="_is_break_on_time" invisible="1"/>
+            </xpath>
+
+
+            <!--
+            <xpath expr="//field[@name='check_in']" position="attributes">
+                <attribute name="string">Arrivée réelle</attribute>
+            </xpath>
+            <xpath expr="//field[@name='check_out']" position="attributes">
+                <attribute name="string">Départ réel</attribute>
+            </xpath> -->
+            <xpath expr="//field[@name='employee_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="/tree/field[@name='employee_id']" position="after">
+                <field name="date_pointage" width="1" readonly="1"/>
+            </xpath>
+            <xpath expr="/tree/field[@name='check_in']" position="replace">
+                <field name="heure_entre" width="1" widget="float_time" string="Arrivée réelle" readonly="1"
+                       decoration-danger="heure_entre>heur_planifie+tolerance or heure_entre==0"
+                       decoration-success="heur_planifie+tolerance>=heure_entre" />
+            </xpath>
+            <xpath expr="/tree/field[@name='check_out']" position="replace">
+                <field name="heure_sortie" width="1" widget="float_time" string="Départ réel" readonly="1"
+                       decoration-danger="heur_depart-tolerance>heure_sortie"
+                       decoration-success="heure_sortie+tolerance>=heur_depart"/>
+            </xpath>
+
+            <xpath expr="/tree/field[@name='heure_entre']" position="before">
+                <field name="heur_planifie" width="1" widget="float_time" string="Arrivée planifiée" readonly="1"/>
+            </xpath>
+            <xpath expr="/tree/field[@name='heure_sortie']" position="before">
+                <field name="heur_depart" width="1" widget="float_time" string="Départ planifié" readonly="1"/>
+            </xpath>
+            <xpath expr="/tree/field[@name='heure_sortie']" position="after">
+                <field name="tolerance" string="Tolérance" widget="float_time" width="1" readonly="1" invisible="1"/>
+            </xpath>
+            <xpath expr="/tree/field[@name='employee_id']" position="before">
+                <button name="%(progistack_attendance.date_modification_wizard_action)d"
+                        string=""
+                        icon="fa-pencil-square-o"
+                        class="oe_stat_button"
+                        type="action"
+                        context="{'default_date_change_in': heure_entre, 'default_date_change_out': heure_sortie, 'default_hour_change': worked_hour}"
+                />
+            </xpath>
+            <!--
+            update attribute for field
+            <field name="check_in" position="attributes">
+                <attribute name="required">False</attribute>
+            </field>
+            -->
+
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-danger">0.00>=heure_entre</attribute>
+                <!--attribute name="decoration-success">worked_hour>=8</attribute-->
+                <attribute name="create">false</attribute>
+            </xpath>
+
+            <tree>
+                <button name="open_user_log" string="Détails" type="object"
+                        class="oe_highlight"/>
+                <field name="statut" readonly="1" widget="badge" decoration-success="statut == 'present'"
+                       decoration-warning="statut in ('retard','retard_anticipe','anticipe')" decoration-danger="statut in ('absent')"/>
+                <field name="is_work_day" invisible="1" />
+                <field name="visible" string="Visible" width="1" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Kanban Hérité -->
+    <record id="inherit_view_attendance_kanban" model="ir.ui.view">
+        <field name="name">inherited_hr.attendance.kanban</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_hr_attendance_kanban"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//kanban" position="inside">
+                <field name="heure_entre" invisible="1"/>
+                <field name="heure_sortie" invisible="1"/>
+                <field name="tolerance" invisible="1"/>
+                <field name="heur_planifie" invisible="1"/>
+                <field name="heur_depart" invisible="1"/>
+                <field name="create_date" invisible="1"/>
+                <field name="etat" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//t[@t-esc='record.check_out.value']" position="after">
+                <!--            <xpath expr="//t[@t-esc='record.heure_sortie.value']" position="after">-->
+                <br/>
+                <!-- Retard -->
+                <div t-if="record.etat.value == 'retard'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:orange;">
+                        <b>Retard</b>
+                    </i>
+                </div>
+
+                <!-- Départ Anticipé -->
+                <div t-if="record.etat.value == 'anticipe'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:orange">
+                        <b>Départ Anticipé</b>
+                    </i>
+                </div>
+
+                <!-- Absence -->
+                <div t-if="record.etat.value == 'absent'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:red;">
+                        <b>Absent</b>
+                    </i>
+                </div>
+
+                <!-- Présence -->
+                <div t-if="record.etat.value == 'present'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:green;">
+                        <b>Présent</b>
+                    </i>
+                </div>
+
+                <!-- Erreur -->
+                <div t-if="record.etat.value == 'erreur'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:grey;">
+                        <b>Erreur</b>
+                    </i>
+                </div>
+
+                <!-- Retard et Anticipé -->
+                <div t-if="record.etat.value == 'retard_anticipe'">
+                    <i class="fa fa-exclamation-triangle" aria-label="Period" role="img" title="Period"
+                       style="color:orange;">
+                        <b>Retard et Anticipé</b>
+                    </i>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vue Form hérité -->
+    <record id="inherit_view_attendance_form" model="ir.ui.view">
+        <field name="name">inherit_hr.attendance.form</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="heur_planifie" width="1" widget="float_time" string="Arrivée Planifiée" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='heur_planifie']" position="after">
+                <field name="heure_entre" width="1" widget="float_time" string="Arrivée réelle" readonly="1"
+                       decoration-danger="heure_entre>heur_planifie+tolerance or heure_entre==0"
+                       decoration-success="heur_planifie+tolerance>=heure_entre"/>
+            </xpath>
+            <xpath expr="//field[@name='check_in']" position="replace">
+                <field name="heur_depart" width="1" widget="float_time" string="Départ Planifié" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='check_out']" position="replace">
+                <field name="heure_sortie" width="1" widget="float_time" string="Départ réel" readonly="1"
+                       decoration-danger="heur_depart-tolerance>heure_sortie"
+                       decoration-success="heure_sortie+tolerance>=heur_depart"/>
+            </xpath>
+            <xpath expr="//field[@name='heure_sortie']" position="after">
+                <field name="statut" width="1" string="Statut" readonly="1" decoration-danger="statut in ['retard','anticipe']"
+                       decoration-warning="statut == 'absent'"/>
+            </xpath>
+            <xpath expr="//field[@name='statut']" position="after">
+                <field name="tolerance" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vue search hérité -->
+    <record id="inherited_hr_attendance_view_filter" model="ir.ui.view">
+        <field name="name">inherited_hr_attendance_view_filter</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='check_in_filter']" position="attributes">
+                <attribute name="string">Arrivée réelle</attribute>
+            </xpath>
+            <xpath expr="//group/filter[@name='groupby_name']" position="attributes">
+                <attribute name="string">Arrivée réelle</attribute>
+            </xpath>
+            <xpath expr="//group/filter[@name='groupby_check_out']" position="attributes">
+                <attribute name="string">Départ réel</attribute>
+            </xpath>
+            <search>
+
+                <group expand="0" string="Group By">
+                    <separator/>
+                    <filter name="date" string="Date" context="{'group_by':'date_pointage:day'}"/>
+                    <separator/>
+<!--                    <filter name="statut" string="Statut" context="{'group_by':'statut'}"/>-->
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_zk_report_daily_attendance_search" model="ir.ui.view">
+        <field name="name">zk.report.daily.attendance.search</field>
+        <field name="model">zk.report.daily.attendance</field>
+        <field name="arch" type="xml">
+            <search string="Hr Attendance Search">
+                <filter icon="terp-stock_align_left_24" string="My Attendance" name="my_attendance"
+                        domain="[('name.user_id.id', '=', uid)]"/>
+                <filter name="today" string="Aujourd'hui"
+                        domain="[('punching_time', '&gt;=', datetime.datetime.now().replace(hour=0, minute=0, second=0)),('punching_time', '&lt;=', datetime.datetime.now().replace(hour=23, minute=59, second=59))]"/>
+                <filter string="Current Month" name="month"
+                        domain="[('punching_time', '&gt;=', datetime.datetime.now().strftime('%Y-%m-01'))]"/>
+                <separator/>
+                <field name="name" string="Name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_zk_report_daily_attendance_tree" model="ir.ui.view">
+        <field name="name">zk.report.daily.attendance.tree</field>
+        <field name="model">zk.report.daily.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Attendance" create="false" delete="false">
+                <field name="punching_time" string="Date et heure"/>
+                <!--field name="punching_day" string="Date et heure de pointage"/-->
+                <field name="punch_type" string="Type"/>
+                <!--                <field name="mod_pers"/>-->
+                <!--                <field name="user"/>-->
+                <field name="name"/>
+                <!--field name="attendance_type"/-->
+                <field name="address_id" invisible="1"/>
+                <!--field name="work_hours"  widget="float_time"/-->
+                <field name="mod_pers"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_zk_report_daily_attendance" model="ir.actions.act_window">
+        <field name="name">Analyse de présence</field>
+        <field name="res_model">zk.report.daily.attendance</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_today':1}</field>
+        <field name="search_view_id" ref="view_zk_report_daily_attendance_search"/>
+    </record>
+
+
+<!--    <record id="hr_attendance.hr_attendance_action" model="ir.actions.act_window">-->
+<!--        <field name="name">Attendances</field>-->
+<!--        <field name="res_model">hr.attendance</field>-->
+<!--        <field name="view_mode">tree,kanban,form</field>-->
+<!--        <field name="domain">[('is_work_day', '=', 1)]</field>-->
+<!--        <field name="search_view_id" ref="hr_attendance.hr_attendance_view_filter"/>-->
+<!--        <field name="help" type="html">-->
+<!--            <p class="o_view_nocontent_empty_folder">-->
+<!--                Aucun enregistrement de présence trouvé-->
+<!--            </p>-->
+<!--            <p>-->
+<!--                Les registres de présence de vos employés seront affichés ici.-->
+<!--            </p>-->
+<!--        </field>-->
+<!--    </record>-->
+
+    <record id="hr_attendance_action_server" model="ir.actions.server">
+        <field name="name">hr_attendance.actions.server</field>
+        <field name="model_id" ref="model_hr_attendance" />
+        <field name="state">code</field>
+        <field name="code">
+            action = model._hr_attendance_action()
+        </field>
+    </record>
+
+    <!--menuitem id="menu_zk_attendance_view" name="Présence log" action="action_zk_report_daily_attendance" parent="zk_machine_menu"
+              sequence="2" groups="hr_attendance.group_hr_attendance_user"/-->
+    <!-- masquer les elements du menu existant 	hr_attendance.menu_hr_attendance_report-->
+    <menuitem id="hr_attendance.menu_hr_attendance_kiosk_no_user_mode" active="False"/>
+    <menuitem id="hr_attendance.menu_hr_attendance_my_attendances" active="False"/>
+    <menuitem id="hr_attendance.menu_hr_attendance_settings" active="False"/>
+    <menuitem id="hr_attendance.menu_hr_attendance_report" active="False"/>
+
+    <!--    Renommage du menu Presences-->
+    <!--    <menuitem id="hr_attendance.menu_hr_attendance_root" name="Pointages" sequence="205" groups="hr_attendance.group_hr_attendance,hr_attendance.group_hr_attendance_kiosk" web_icon="hr_attendance,static/description/icon.png"/>-->
+
+
+    <!--    <menuitem id="hr_attendance.menu_hr_attendance_attendances_overview" name="Pointages" parent="hr_attendance.menu_hr_attendance_root" sequence="1" groups="hr_attendance.group_hr_attendance" action="hr_attendance.hr_attendance_action_overview" active="False"/>-->
+    <!--    <menuitem id="progistack_menu_hr_attendance_attendances_overview" name="Pointages" parent="hr_attendance.menu_hr_attendance_root" sequence="1" groups="hr_attendance.group_hr_attendance" action="hr_attendance.hr_attendance_action_overview" />-->
+
+    <menuitem id="hr_attendance.menu_hr_attendance_view_attendances" name="Présences"
+              parent="hr_attendance.menu_hr_attendance_root" sequence="10"
+              groups="hr_attendance.group_hr_attendance_user" action="hr_attendance_action_server"
+              active="False"/>
+    <menuitem id="progistack_menu_hr_attendance_view_attendances" name="Pointages"
+              parent="hr_attendance.menu_hr_attendance_root" sequence="10"
+              groups="hr_attendance.group_hr_attendance_user"/>
+    <menuitem id="progistack_menu_hr_attendance_view_attendances_pointage" name="Pointages"
+              parent="progistack_menu_hr_attendance_view_attendances" sequence="1"
+              action="progistack_attendance.hr_attendance_action_server"/>
+
+<!--    <menuitem id="hr_attendance_export_data_menu" name="Exporter les données de Pointages"-->
+<!--              parent="hr_attendance.menu_hr_attendance_root" sequence="11"-->
+<!--              />-->
+
+    <menuitem id="hr_attendance_export_data_menu_list_1" name="Exporter les données de Pointages"
+              parent="progistack_menu_hr_attendance_view_attendances" sequence="2"
+              action="progistack_attendance.report_presence_update_action"/>
+
+</odoo>

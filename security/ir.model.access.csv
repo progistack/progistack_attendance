@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_zk_machine_user,zk.machine.hr_biometric_machine,model_zk_machine,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user1,zk.machine.hr_biometric_machine1,model_zk_machine_attendance,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user2,zk.machine.hr_biometric_machine2,model_zk_report_daily_attendance,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user3,hr.employee_absence,model_employee_absence,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user4,hr.week_day,model_week_day,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user5,hr.absence,model_hr_absence,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user6,hr.analyse,model_hr_analyse,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user7,date.modification,model_date_modification,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user8,log.detail,model_log_detail,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_zk_machine_user9,sequence.log,model_sequence_log,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_hr_attendance_jours_travailles,hr_attendance.jours_travailles,model_hr_attendance_jours_travailles,,1,1,1,1
+access_download_lack_attendance,download.lack.attendance,model_download_lack_attendance,,1,1,1,1
+access_report_presence,report.presence,model_report_presence,,1,1,1,1
+access_download_machine_attendance,download.machine.attendance,model_download_machine_attendance,,1,1,1,1
+access_hr_zk_machine_user10,download.machine.attendance,model_download_machine_attendance,hr_attendance.group_hr_attendance_user,1,1,1,1
+access_heure_travaillees,heure.travaillees,model_heure_travaillees,,1,1,1,1

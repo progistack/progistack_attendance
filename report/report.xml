@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="report_synthese_partner_view">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <h3 class="text-center" style="font-weight:bold; font-size:18;">RAPPORT DE PRESENCES DU
+                        <span t-esc="start_date"/>
+                        au
+                        <span t-esc="end_date"/>
+                    </h3>
+                    <br/>
+                    <br/>
+
+                    <t t-foreach="date_between" t-as="dt">
+                        <center>
+                            <span t-esc="dt.strftime('%d-%m-%Y')"
+                                  style="font-weight:bold; font-size:18;"/>
+                        </center>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <!-- Employee -->
+                                    <th class="text-center">
+                                        <strong>Employé</strong>
+                                    </th>
+
+                                    <!-- Arrivée -->
+                                    <th class="text-center">
+                                        <strong>Arrivée</strong>
+                                    </th>
+
+                                    <!-- Sortie 1 -->
+                                    <th class="text-center">
+                                        <strong>Sortie</strong>
+                                    </th>
+
+                                    <!-- Entrée 1 -->
+                                    <th class="text-center">
+                                        <strong>Entrée</strong>
+                                    </th>
+
+                                    <!-- Sortie 2 -->
+                                    <th class="text-center">
+                                        <strong>Sortie</strong>
+                                    </th>
+
+                                    <!-- Entrée 2 -->
+                                    <th class="text-center">
+                                        <strong>Entrée</strong>
+                                    </th>
+
+                                    <!-- Départ -->
+                                    <th class="text-center">
+                                        <strong>Départ</strong>
+                                    </th>
+
+                                    <!--                                    &lt;!&ndash; Heure Travaillée &ndash;&gt;-->
+                                    <!--                                    <th class="text-center">-->
+                                    <!--                                        <strong>Heures travaillées</strong>-->
+                                    <!--                                    </th>-->
+
+                                    <!-- Statut -->
+                                    <th class="text-center">
+                                        <strong>Statut</strong>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <!-- Statut absence -->
+                        <t t-if="with_present">
+                            <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+
+                                            <tbody>
+                                                <tr t-if="o['statut'] == 'absent'">
+                                                    <!-- Employee -->
+                                                    <td class="text-center">
+                                                        <span t-esc="o['employee_id']['name']"/>
+                                                    </td>
+
+                                                    <!-- Arrivée Réelle -->
+                                                    <td class="text-center">
+
+                                                    </td>
+
+                                                    <!-- Sortie 1 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Entrée 2 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Sortie 2-->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Entrée 3 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Départ Réel -->
+                                                    <td class="text-center">
+
+                                                    </td>
+
+                                                    <!-- Heure Travaillée -->
+                                                    <!--                                                <td class="text-center">-->
+                                                    <!--                                                </td>-->
+
+                                                    <!-- Statut -->
+                                                    <td class="text-center">
+                                                        <t t-if=" o['statut'] == 'absent'">
+                                                            <span style="color:#FF0000">Absence</span>
+                                                        </t>
+                                                        <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                            <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                        </t>
+                                                        <t t-if=" o['statut'] == 'erreur'">
+                                                            <span style="color:#808080">Erreur</span>
+                                                        </t>
+                                                        <t t-if=" o['statut'] == 'present'">
+                                                            <span style="color:#008000">Présent</span>
+                                                        </t>
+
+                                                        <!-- Couleur du Statut retard -->
+                                                        <span t-if="o['statut'] == 'retard'"
+                                                              style="color:#FFA500;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+
+                                                        <!-- Couleur du Statut anticipe -->
+                                                        <span t-if="o['statut'] == 'anticipe'"
+                                                              style="color:#FFA500;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+
+                                                        <!-- Couleur du Statut conge -->
+                                                        <span t-if="o['statut'] == 'conge'"
+                                                              style="color:#32CD32;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+
+                                </t>
+                            </t>
+
+                            <!-- Statut non absence -->
+                            <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+                                        <tbody>
+                                            <!-- Statut non absence -->
+                                            <tr t-if="o['statut'] != 'absent' and o['statut'] != 'erreur'">
+                                                <!-- Employee -->
+                                                <td class="text-center">
+                                                    <span t-esc="o['employee_id']['name']"/>
+                                                </td>
+
+                                                <!-- Arrivée Réelle -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heure_entre'] - o['tolerance']  > o['heur_planifie'] "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heure_entre'] == 0.00 "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_entre']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                </td>
+
+                                                <!-- Sortie 1 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_first_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 2 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_second_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Sortie 2-->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_second_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 3 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_last_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Départ Réel -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heur_depart'] &lt; o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heur_depart'] == o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_sortie']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+                                                </td>
+
+                                                <!-- Heure Travaillée -->
+                                                <!--                                                <td class="text-center">-->
+                                                <!--                                                    <span t-if="o['worked_hour'] &lt; 8.00"-->
+                                                <!--                                                          t-esc="o['worked_hour']" style="color:#FF0000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+
+                                                <!--                                                    <span t-else="" t-esc="o['worked_hour']" style="color:#008000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+                                                <!--                                                </td>-->
+
+                                                <!-- Statut -->
+                                                <td class="text-center">
+                                                    <t t-if=" o['statut'] == 'absent'">
+                                                        <span style="color:#FF0000">Absence</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                        <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'erreur'">
+                                                        <span style="color:#808080">Erreur</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'present'">
+                                                        <span style="color:#008000">Présent</span>
+                                                    </t>
+
+                                                    <!-- Couleur du Statut retard -->
+                                                    <span t-if="o['statut'] == 'retard'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut anticipe -->
+                                                    <span t-if="o['statut'] == 'anticipe'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut conge -->
+                                                    <span t-if="o['statut'] == 'conge'"
+                                                          style="color:#32CD32;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                </t>
+                            </t>
+                            <!-- Statut erreur -->
+                            <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+                                        <tbody>
+                                            <!-- Statut non absence -->
+                                            <tr t-if="o['statut'] == 'erreur'">
+                                                <!-- Employee -->
+                                                <td class="text-center">
+                                                    <span t-esc="o['employee_id']['name']"/>
+                                                </td>
+
+                                                <!-- Arrivée Réelle -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heure_entre'] - o['tolerance']  > o['heur_planifie'] "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heure_entre'] == 0.00 "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_entre']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                </td>
+
+                                                <!-- Sortie 1 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_first_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 2 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_second_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Sortie 2-->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_second_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 3 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_last_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Départ Réel -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heur_depart'] &lt; o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heur_depart'] == o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_sortie']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+                                                </td>
+
+                                                <!-- Heure Travaillée -->
+                                                <!--                                                <td class="text-center">-->
+                                                <!--                                                    <span t-if="o['worked_hour'] &lt; 8.00"-->
+                                                <!--                                                          t-esc="o['worked_hour']" style="color:#FF0000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+
+                                                <!--                                                    <span t-else="" t-esc="o['worked_hour']" style="color:#008000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+                                                <!--                                                </td>-->
+
+                                                <!-- Statut -->
+                                                <td class="text-center">
+                                                    <t t-if=" o['statut'] == 'absent'">
+                                                        <span style="color:#FF0000">Absence</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                        <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'erreur'">
+                                                        <span style="color:#808080">Erreur</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'present'">
+                                                        <span style="color:#008000">Présent</span>
+                                                    </t>
+
+                                                    <!-- Couleur du Statut retard -->
+                                                    <span t-if="o['statut'] == 'retard'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut anticipe -->
+                                                    <span t-if="o['statut'] == 'anticipe'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut conge -->
+                                                    <span t-if="o['statut'] == 'conge'"
+                                                          style="color:#32CD32;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                </t>
+                            </t>
+                        </t>
+                            <t t-else="">
+
+                                <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+
+                                        <t t-if="o['statut'] != 'present'">
+                                            <tbody>
+                                                <tr t-if="o['statut'] == 'absent'">
+                                                    <!-- Employee -->
+                                                    <td class="text-center">
+                                                        <span t-esc="o['employee_id']['name']"/>
+                                                    </td>
+
+                                                    <!-- Arrivée Réelle -->
+                                                    <td class="text-center">
+
+                                                    </td>
+
+                                                    <!-- Sortie 1 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Entrée 2 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Sortie 2-->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Entrée 3 -->
+                                                    <td class="text-center">
+                                                    </td>
+
+                                                    <!-- Départ Réel -->
+                                                    <td class="text-center">
+
+                                                    </td>
+
+                                                    <!-- Heure Travaillée -->
+                                                    <!--                                                <td class="text-center">-->
+                                                    <!--                                                </td>-->
+
+                                                    <!-- Statut -->
+                                                    <td class="text-center">
+                                                        <t t-if=" o['statut'] == 'absent'">
+                                                            <span style="color:#FF0000">Absence</span>
+                                                        </t>
+                                                        <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                            <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                        </t>
+                                                        <t t-if=" o['statut'] == 'erreur'">
+                                                            <span style="color:#808080">Erreur</span>
+                                                        </t>
+
+                                                        <!-- Couleur du Statut retard -->
+                                                        <span t-if="o['statut'] == 'retard'"
+                                                              style="color:#FFA500;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+
+                                                        <!-- Couleur du Statut anticipe -->
+                                                        <span t-if="o['statut'] == 'anticipe'"
+                                                              style="color:#FFA500;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+
+                                                        <!-- Couleur du Statut conge -->
+                                                        <span t-if="o['statut'] == 'conge'"
+                                                              style="color:#32CD32;text-transform: capitalize;"
+                                                              t-esc="o['statut']"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </t>
+                                </t>
+                            </t>
+
+                            <!-- Statut non absence -->
+                            <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+                                    <t t-if="o['statut'] != 'present'">
+                                        <tbody>
+                                            <!-- Statut non absence -->
+                                            <tr t-if="o['statut'] != 'absent' and o['statut'] != 'erreur'">
+                                                <!-- Employee -->
+                                                <td class="text-center">
+                                                    <span t-esc="o['employee_id']['name']"/>
+                                                </td>
+
+                                                <!-- Arrivée Réelle -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heure_entre'] - o['tolerance']  > o['heur_planifie'] "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heure_entre'] == 0.00 "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_entre']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                </td>
+
+                                                <!-- Sortie 1 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_first_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 2 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_second_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Sortie 2-->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_second_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 3 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_last_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Départ Réel -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heur_depart'] &lt; o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heur_depart'] == o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_sortie']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+                                                </td>
+
+                                                <!-- Heure Travaillée -->
+                                                <!--                                                <td class="text-center">-->
+                                                <!--                                                    <span t-if="o['worked_hour'] &lt; 8.00"-->
+                                                <!--                                                          t-esc="o['worked_hour']" style="color:#FF0000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+
+                                                <!--                                                    <span t-else="" t-esc="o['worked_hour']" style="color:#008000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+                                                <!--                                                </td>-->
+
+                                                <!-- Statut -->
+                                                <td class="text-center">
+                                                    <t t-if=" o['statut'] == 'absent'">
+                                                        <span style="color:#FF0000">Absence</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                        <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'erreur'">
+                                                        <span style="color:#808080">Erreur</span>
+                                                    </t>
+
+                                                    <!-- Couleur du Statut retard -->
+                                                    <span t-if="o['statut'] == 'retard'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut anticipe -->
+                                                    <span t-if="o['statut'] == 'anticipe'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut conge -->
+                                                    <span t-if="o['statut'] == 'conge'"
+                                                          style="color:#32CD32;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </t>
+                                </t>
+                            </t>
+                            <!-- Statut erreur -->
+                            <t t-foreach="all_presences" t-as="o">
+                                <t t-if="o['date_pointage'].strftime('%d-%m-%Y') == dt.strftime('%d-%m-%Y')">
+                                    <t t-if="o['statut'] != 'present'">
+                                        <tbody>
+                                            <!-- Statut non absence -->
+                                            <tr t-if="o['statut'] == 'erreur'">
+                                                <!-- Employee -->
+                                                <td class="text-center">
+                                                    <span t-esc="o['employee_id']['name']"/>
+                                                </td>
+
+                                                <!-- Arrivée Réelle -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heure_entre'] - o['tolerance']  > o['heur_planifie'] "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heure_entre'] == 0.00 "
+                                                          t-esc="o['heure_entre']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_entre']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                </td>
+
+                                                <!-- Sortie 1 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_first_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 2 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_second_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Sortie 2-->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_out" t-as="out">
+                                                        <t t-if="out[0] == o['date_pointage'] and out[1] == o['employee_id']['name']">
+                                                            <t t-if="out[2]">
+                                                                <span t-esc="get_second_position(out[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Entrée 3 -->
+                                                <td class="text-center">
+                                                    <t t-foreach="att_in" t-as="p">
+                                                        <t t-if="p[0] == o['date_pointage'] and p[1] == o['employee_id']['name']">
+                                                            <t t-if="p[2]">
+                                                                <span t-esc="get_last_position(p[2])"/>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                        </t>
+                                                    </t>
+                                                </td>
+
+                                                <!-- Départ Réel -->
+                                                <td class="text-center">
+                                                    <span t-if=" o['heur_depart'] &lt; o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-elif=" o['heur_depart'] == o['heure_sortie']"
+                                                          t-esc="o['heure_sortie']" style="color:#008000"
+                                                          t-options="{'widget': 'float_time'}"/>
+
+                                                    <span t-else="" t-esc="o['heure_sortie']" style="color:#FF0000"
+                                                          t-options="{'widget': 'float_time'}"/>
+                                                </td>
+
+                                                <!-- Heure Travaillée -->
+                                                <!--                                                <td class="text-center">-->
+                                                <!--                                                    <span t-if="o['worked_hour'] &lt; 8.00"-->
+                                                <!--                                                          t-esc="o['worked_hour']" style="color:#FF0000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+
+                                                <!--                                                    <span t-else="" t-esc="o['worked_hour']" style="color:#008000"-->
+                                                <!--                                                          t-options="{'widget': 'float_time'}"/>-->
+                                                <!--                                                </td>-->
+
+                                                <!-- Statut -->
+                                                <td class="text-center">
+                                                    <t t-if=" o['statut'] == 'absent'">
+                                                        <span style="color:#FF0000">Absence</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'retard_anticipe'">
+                                                        <span style="color:#FFA500;">Retard et Anticipé</span>
+                                                    </t>
+                                                    <t t-if=" o['statut'] == 'erreur'">
+                                                        <span style="color:#808080">Erreur</span>
+                                                    </t>
+
+                                                    <!-- Couleur du Statut retard -->
+                                                    <span t-if="o['statut'] == 'retard'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut anticipe -->
+                                                    <span t-if="o['statut'] == 'anticipe'"
+                                                          style="color:#FFA500;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+
+                                                    <!-- Couleur du Statut conge -->
+                                                    <span t-if="o['statut'] == 'conge'"
+                                                          style="color:#32CD32;text-transform: capitalize;"
+                                                          t-esc="o['statut']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </t>
+                                </t>
+                            </t>
+
+                            </t>
+                        </table>
+                    </t>
+                    <t t-call="progistack_attendance.progistack_footer"/>
+                </t>
+            </t>
+        </template>
+    </data>
+
+    <record id="paperformat_progistack" model="report.paperformat">
+        <field name="name">US Letter</field>
+        <field name="default" eval="True"/>
+        <field name="format">Letter</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="report_secii_synthese_partner" model="ir.actions.report">
+        <field name="name">report presence</field>
+        <field name="model">hr.attendance</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">progistack_attendance.report_synthese_partner_view</field>
+        <field name="report_file">progistack_attendance.report_synthese_partner_view</field>
+        <field name="paperformat_id" ref="paperformat_progistack"/>
+        <!--        <field name="print_report_name">'recouvrement client'</field>-->
+        <field name="binding_model_id" eval="False"/>
+        <!--        <field name="binding_model_id" ref="model_secii_synthese"/>-->
+        <field name="binding_type">report</field>
+    </record>
+
+
+    <!--    <record id="report_synthese_report_partner" model="ir.actions.report">-->
+    <!--        <field name="name">Presence Card</field>-->
+    <!--        <field name="model">hr.attendance</field>-->
+    <!--        <field name="report_type">qweb-pdf</field>-->
+    <!--        <field name="report_name">progistack_attendance.report_attendance</field>-->
+    <!--        <field name="report_file">progistack_attendance.report_attendance</field>-->
+    <!--&lt;!&ndash;        <field name="print_report_name">'Presence-Card'</field>&ndash;&gt;-->
+    <!--        <field name="binding_model_id" eval="False"/>-->
+    <!--        <field name="binding_type">report</field>-->
+    <!--    </record>-->
+
+</odoo>
+
